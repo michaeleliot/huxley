@@ -57,6 +57,7 @@
 	var ReactDOM = __webpack_require__(276);
 	var ReactRouter = __webpack_require__(410);
 
+<<<<<<< 67e511d444cd99d1d0f4ec5ea5d17e6973a16d22
 	var CurrentUserActions = __webpack_require__(459);
 	var Huxley = __webpack_require__(465);
 	var AdvisorAssignmentsView = __webpack_require__(498);
@@ -73,10 +74,31 @@
 	var RegistrationClosedView = __webpack_require__(547);
 	var RegistrationSuccessView = __webpack_require__(548);
 	var RegistrationWaitlistView = __webpack_require__(549);
+=======
+	var CurrentUserActions = __webpack_require__(457);
+	var CurrentUserStore = __webpack_require__(478);
+	var Huxley = __webpack_require__(463);
+	var AdvisorAssignmentsView = __webpack_require__(496);
+	var AdvisorProfileView = __webpack_require__(503);
+	var AdvisorRosterView = __webpack_require__(511);
+	var ChairAttendanceView = __webpack_require__(532);
+	var ForgotPasswordView = __webpack_require__(533);
+	var LoginView = __webpack_require__(536);
+	var NotFoundView = __webpack_require__(537);
+	var PasswordResetSuccessView = __webpack_require__(538);
+	var PermissionDeniedView = __webpack_require__(466);
+	var RedirectView = __webpack_require__(539);
+	var RegistrationView = __webpack_require__(540);
+	var RegistrationClosedView = __webpack_require__(545);
+	var RegistrationSuccessView = __webpack_require__(546);
+	var RegistrationWaitlistView = __webpack_require__(547);
+>>>>>>> componentWillMount User Check
 
 	var IndexRoute = ReactRouter.IndexRoute;
 	var Router = ReactRouter.Router;
 	var Route = ReactRouter.Route;
+
+	var User = __webpack_require__(475);
 
 	var routes = React.createElement(
 	  Route,
@@ -93,7 +115,8 @@
 	  React.createElement(Route, { path: '/advisor/profile', component: AdvisorProfileView }),
 	  React.createElement(Route, { path: '/advisor/assignments', component: AdvisorAssignmentsView }),
 	  React.createElement(Route, { path: '/advisor/roster', component: AdvisorRosterView }),
-	  React.createElement(Route, { path: '/chair/attendance', component: ChairAttendanceView }),
+	  React.createElement(Route, { path: '/chair/attendance', component: User.isChair(global.currentUser) ? ChairAttendanceView : PermissionDeniedView
+	  }),
 	  React.createElement(Route, { path: '/permissiondenied', component: PermissionDeniedView }),
 	  React.createElement(IndexRoute, { component: RedirectView }),
 	  React.createElement(Route, { path: '*', component: NotFoundView })
@@ -53074,12 +53097,92 @@
 
 	  mixins: [ReactRouter.History],
 
-	  render: function render() {
-	    if (User.isChair(this.props.user)) {
+<<<<<<< 67e511d444cd99d1d0f4ec5ea5d17e6973a16d22
+=======
+	  componentWillMount: function componentWillMount() {
+	    var user = CurrentUserStore.getCurrentUser();
+	    CountryStore.getCountries(function (countries) {
+	      this.setState({ countries: countries });
+	    }.bind(this));
+
+	    if (!User.isChair(user)) {
+	      this.history.pushState(null, '/');
+	    }
+	  },
+
+	  renderAttendanceRows: function renderAttendanceRows() {
+	    return this.state.countries.map(function (country) {
 	      return React.createElement(
-	        InnerView,
+	        'tr',
 	        null,
 	        React.createElement(
+	          'td',
+	          null,
+	          country.name
+	        ),
+	        React.createElement(
+	          'td',
+	          null,
+	          React.createElement(
+	            'label',
+	            { name: 'committee_prefs' },
+	            React.createElement('input', {
+	              className: 'choice',
+	              type: 'checkbox',
+	              name: 'committee_prefs'
+	            })
+	          )
+	        ),
+	        React.createElement(
+	          'td',
+	          null,
+	          React.createElement(
+	            'label',
+	            { name: 'committee_prefs' },
+	            React.createElement('input', {
+	              className: 'choice',
+	              type: 'checkbox',
+	              name: 'committee_prefs'
+	            })
+	          )
+	        ),
+	        React.createElement(
+	          'td',
+	          null,
+	          React.createElement(
+	            'label',
+	            { name: 'committee_prefs' },
+	            React.createElement('input', {
+	              className: 'choice',
+	              type: 'checkbox',
+	              name: 'committee_prefs'
+	            })
+	          )
+	        )
+	      );
+	    }.bind(this));
+	  },
+
+>>>>>>> componentWillMount User Check
+	  render: function render() {
+	    return React.createElement(
+	      InnerView,
+	      null,
+	      React.createElement(
+	        'h2',
+	        null,
+	        'Attendance'
+	      ),
+	      React.createElement(
+	        'p',
+	        null,
+	        'Here you can take attendance for delegates. Note that confirming attendance will alert the advisor as to if there delegates have shown up to committee.'
+	      ),
+	      React.createElement(
+	        'form',
+	        null,
+	        React.createElement(
+<<<<<<< 67e511d444cd99d1d0f4ec5ea5d17e6973a16d22
 	          'h2',
 	          null,
 	          'Chair View'
@@ -53096,11 +53199,56 @@
 	            'info@bmun.org'
 	          ),
 	          '. The assignment finalization deadline is January 23rd. After assignment finalization we will ask that you assign the delegates you have added in the delegates tab to the assignments given to you.'
+=======
+	          'div',
+	          { className: 'table-container' },
+	          React.createElement(
+	            'table',
+	            { className: 'table highlight-cells' },
+	            React.createElement(
+	              'thead',
+	              null,
+	              React.createElement(
+	                'tr',
+	                null,
+	                React.createElement(
+	                  'th',
+	                  null,
+	                  'Assignment'
+	                ),
+	                React.createElement(
+	                  'th',
+	                  null,
+	                  'Present'
+	                ),
+	                React.createElement(
+	                  'th',
+	                  null,
+	                  'Present2'
+	                ),
+	                React.createElement(
+	                  'th',
+	                  null,
+	                  'Present3'
+	                )
+	              )
+	            ),
+	            React.createElement(
+	              'tbody',
+	              null,
+	              this.renderAttendanceRows()
+	            )
+	          )
+	        ),
+	        React.createElement(
+	          Button,
+	          {
+	            color: 'green' },
+	          'Confirm Attendance'
+>>>>>>> componentWillMount User Check
 	        )
-	      );
-	    } else {
-	      return React.createElement(PermissionDeniedView, null);
-	    }
+	      )
+	    );
 	  }
 	});
 

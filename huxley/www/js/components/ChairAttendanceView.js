@@ -39,6 +39,10 @@ var ChairAttendanceView = React.createClass({
      CountryStore.getCountries(function(countries) {
       this.setState({countries: countries});
     }.bind(this));
+
+    if (!User.isChair(user)) {
+      this.history.pushState(null, '/');
+    }
   },
 
   renderAttendanceRows: function() {
@@ -80,6 +84,7 @@ var ChairAttendanceView = React.createClass({
   },
 
   render: function() {
+<<<<<<< 67e511d444cd99d1d0f4ec5ea5d17e6973a16d22
     return (
       <InnerView>
         <h2>Attendance</h2>
@@ -112,6 +117,40 @@ var ChairAttendanceView = React.createClass({
       </InnerView>
     );
   },
+=======
+      return (
+        <InnerView>
+          <h2>Attendance</h2>
+          <p>
+            Here you can take attendance for delegates. Note that confirming attendance will alert
+            the advisor as to if there delegates have shown up to committee.
+          </p>
+            <form>
+            <div className="table-container">
+              <table className="table highlight-cells">
+                <thead>
+                  <tr>
+                    <th>Assignment</th>
+                    <th>Present</th>
+                    <th>Present2</th>
+                    <th>Present3</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {this.renderAttendanceRows()}
+                </tbody>
+              </table>
+            </div>
+            <Button
+              color="green">
+              Confirm Attendance
+            </Button>
+          </form>
+
+        </InnerView>
+      );
+    },
+>>>>>>> componentWillMount User Check
 });
     
 
