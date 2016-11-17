@@ -102,7 +102,7 @@ var ChairAttendanceView = React.createClass({
               <input
                 className="choice"
                 type="checkbox"
-                name="sessionOneAttendance"
+                name="Friday Attendance"
                 onChange={_handleAttendanceChange.bind(this, delegates, country, 1)}
               />
             </label>
@@ -112,7 +112,7 @@ var ChairAttendanceView = React.createClass({
               <input
                 className="choice"
                 type="checkbox"
-                name="sessionTwoAttendance"
+                name="Saturday Morning Attendance"
               />
             </label>
           </td>
@@ -121,7 +121,16 @@ var ChairAttendanceView = React.createClass({
               <input
                 className="choice"
                 type="checkbox"
-                name="sessionThreeAttendance"
+                name="Saturday Afternoon Attendance"
+              />
+            </label>
+          </td>
+          <td>
+            <label name="session">
+              <input
+                className="choice"
+                type="checkbox"
+                name="Sunday Attendance"
               />
             </label>
           </td>
@@ -139,17 +148,18 @@ var ChairAttendanceView = React.createClass({
     this.setState({
       assignments: assignments
     });
-  } 
+  }, 
 
   _handleSaveAttendance: function(event) {
     for (var country in this.state.assignments) {
       for (var delegate in this.state.assignments[country]) {
-        ServerAPI.updateDelegate(delegate.id, {
+        DelegateStore.updateDelegate(delegate.id, {
           sessionOneAttendance: delegate.sessionOneAttendance,
           sessionTwoAttendance: delegate.sessionTwoAttendance,
           sessionThreeAttendance: delegate.sessionThreeAttendance});
       }
     }
+    event.preventDefault();
   },
 
 });
