@@ -67,7 +67,6 @@
 	var LoginView = __webpack_require__(536);
 	var NotFoundView = __webpack_require__(537);
 	var PasswordResetSuccessView = __webpack_require__(538);
-	var PermissionDeniedView = __webpack_require__(466);
 	var RedirectView = __webpack_require__(539);
 	var RegistrationView = __webpack_require__(540);
 	var RegistrationClosedView = __webpack_require__(545);
@@ -94,7 +93,6 @@
 	  React.createElement(Route, { path: '/advisor/assignments', component: AdvisorAssignmentsView }),
 	  React.createElement(Route, { path: '/advisor/roster', component: AdvisorRosterView }),
 	  React.createElement(Route, { path: '/chair/attendance', component: ChairAttendanceView }),
-	  React.createElement(Route, { path: '/permissiondenied', component: PermissionDeniedView }),
 	  React.createElement(IndexRoute, { component: RedirectView }),
 	  React.createElement(Route, { path: '*', component: NotFoundView })
 	);
