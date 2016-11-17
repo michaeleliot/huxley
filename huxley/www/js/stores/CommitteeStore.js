@@ -12,6 +12,7 @@ var {Store} = require('flux/utils');
 
 
 var _committeePromise = null;
+var _committeeDelegates = {};
 
 class CommitteeStore extends Store {
   getCommittees(callback) {
@@ -32,6 +33,22 @@ class CommitteeStore extends Store {
       p.then(callback);
     }
     return p;
+  }
+
+  getCommitteeDelegates(committeeID) {
+    if (_committeeDelegates[committeeID]) {
+      return _committeeDelegates[committeeID];
+    }
+
+    ServerAPI.getDelegates(committeeID).then(value => {
+      _committeeDelegates[committeeID] = value;
+      for (const delegate of value) {
+        _delegates[delegate.id] = delegate;
+      }
+      DelegateActions.delegatesFetched();
+    });
+
+    return [];
   }
 
   __onDispatch(action) {

@@ -47,6 +47,13 @@ var ServerAPI = {
     return _get(`/api/schools/${schoolID}/delegates`);
   },
 
+  /**
+   * Get a list of all delegates for the given committee ID.
+   */
+  getCommitteeDelegates(committeeID) {
+    return _get(`/api/committees/${committeeID}/delegates`);
+  },
+
   login(username, password) {
     return _post('/api/users/me', {username, password});
   },
