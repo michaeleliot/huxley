@@ -6,16 +6,12 @@
 'use strict';
 
 var React = require('react');
-var ReactRouter = require('react-router');
 
 var NavTab = require('components/NavTab');
 var TopBar = require('components/TopBar');
-var User = require('utils/User');
 
-var ChairView = React.createClass ({
-  mixins: [ReactRouter.History],
-
-  render: function() {
+var ChairView = React.createClass({
+  render() {
     return (
       <div>
         <TopBar user={this.props.user} />
