@@ -5,7 +5,6 @@
 
 'use strict';
 
-var $ = require('jquery');
 var Dispatcher = require('dispatcher/Dispatcher');
 var ServerAPI = require('lib/ServerAPI');
 var {Store} = require('flux/utils');
@@ -40,7 +39,7 @@ class CommitteeStore extends Store {
       return _committeeDelegates[committeeID];
     }
 
-    ServerAPI.getDelegates(committeeID).then(value => {
+    ServerAPI.getCommitteeDelegates(committeeID).then(value => {
       _committeeDelegates[committeeID] = value;
       for (const delegate of value) {
         _delegates[delegate.id] = delegate;
@@ -51,9 +50,24 @@ class CommitteeStore extends Store {
     return [];
   }
 
+  updateDelegates(committeeID, delegates) {
+    ServerAPI.updateCommitteeDelegates(
+      committeeID,
+      JSON.stringify(delegates)
+    )
+    for (const delegate of delegates) {
+      _delegates[delegate.id] = delegate;
+    }
+    _committeeDelegates[schoolID] = delegates;
+  }
+
   __onDispatch(action) {
-    // This method must be overwritten
-    return;
+    switch (action.actionType) {
+      case ActionConstants.UPDATE_DELEGATES:
+        this.updateDelegates(action.committeeID, action.delegates);
+        break;
+      default:
+        return;
   }
 };
 

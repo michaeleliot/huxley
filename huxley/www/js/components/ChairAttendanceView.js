@@ -151,14 +151,7 @@ var ChairAttendanceView = React.createClass({
   }, 
 
   _handleSaveAttendance: function(event) {
-    for (var country in this.state.assignments) {
-      for (var delegate in this.state.assignments[country]) {
-        DelegateStore.updateDelegate(delegate.id, {
-          sessionOneAttendance: delegate.sessionOneAttendance,
-          sessionTwoAttendance: delegate.sessionTwoAttendance,
-          sessionThreeAttendance: delegate.sessionThreeAttendance});
-      }
-    }
+    // Needs to be filled in
     event.preventDefault();
   },
 

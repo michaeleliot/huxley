@@ -77,6 +77,11 @@ var ServerAPI = {
   updateSchoolDelegates(schoolID, delegates) {
     return _patch(`/api/schools/${schoolID}/delegates`, delegates);
   },
+
+  updateCommitteeDelegates(committeeID, delegates) {
+    return _patch('/api/commitees/${committeeID}/delegates', delegates);
+  },
+
 };
 
 function _ajax(method, uri, data) {
