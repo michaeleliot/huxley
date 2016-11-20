@@ -11,6 +11,7 @@ var ReactRouter = require('react-router');
 var Button = require('components/Button');
 var ConferenceContext = require('components/ConferenceContext');
 var CurrentUserStore = require('stores/CurrentUserStore');
+var DelegateStore = require('stores/DelegateStore');
 var InnerView = require('components/InnerView');
 var User = require('utils/User');
 
@@ -19,20 +20,41 @@ var ChairAttendanceView = React.createClass({
     ReactRouter.History,
   ],
 
-  getInitialState() {
+  getInitialState: function() {
     return {
       assigments: {},
+      delegates: [],
     };
   },
 
-  componentWillMount() {
+  componentWillMount: function() {
     var user = CurrentUserStore.getCurrentUser();
     if (!User.isChair(user)) {
       this.history.pushState(null, '/');
     }
+
+    DelegateStore.getCommitteeDelegates(user.committee.id, (delegates) => {
+      this.setState({
+        delegates: delegates
+      });
+    });
+
+    for (delegate of delegates) {
+      var assignments = this.state.assignments;
+      var country = delegate.assignment.country.id;
+      if (country in assigments) {
+        var delegates = assignments[country];
+        delegates.push(delegate);
+      } else {
+        assignments[country] = [delegate];
+      }
+      this.setState({
+        assignments: assignments
+      });
+    }
   },
 
-  render() {
+  render: function() {
     return (
       <InnerView>
         <h2>Attendance</h2>
@@ -47,9 +69,9 @@ var ChairAttendanceView = React.createClass({
               <thead>
                 <tr>
                   <th>Assignment</th>
-                  <th>Present</th>
-                  <th>Present2</th>
-                  <th>Present3</th>
+                  <th>Session One</th>
+                  <th>Session Two</th>
+                  <th>Session Three</th>
                 </tr>
               </thead>
               <tbody>
@@ -66,49 +88,78 @@ var ChairAttendanceView = React.createClass({
     );
   },
 
-  renderAttendanceRows() {
-    /*
-     * This will not be used, and is just a dummy example of what the code will
-     * look like in the final page
-     */
-    // return this.state.countries.map(function(country) {
-    //   return (
-    //     <tr>
-    //       <td>
-    //         {country.name}
-    //       </td>
-    //       <td>
-    //           <label name="committee_prefs">
-    //             <input
-    //               className="choice"
-    //               type="checkbox"
-    //               name="committee_prefs"
-    //             />
-    //           </label>
-    //       </td>
-    //       <td>
-    //           <label name="committee_prefs">
-    //             <input
-    //               className="choice"
-    //               type="checkbox"
-    //               name="committee_prefs"
-    //             />
-    //           </label>
-    //       </td>
-    //       <td>
-    //           <label name="committee_prefs">
-    //             <input
-    //               className="choice"
-    //               type="checkbox"
-    //               name="committee_prefs"
-    //             />
-    //           </label>
-    //       </td>
-    //     </tr>
-    //   )}.bind(this));
-    return (
-      <tr></tr>
-    );
+  renderAttendanceRows: function() {
+    var countries = Object.keys(this.state.assignments);
+    return countries.map((country) => {
+      var delegates = this.state.assignments[country];
+      return (
+        <tr>
+          <td>
+            {country.name}
+          </td>
+          <td>
+            <label name="session">
+              <input
+                className="choice"
+                type="checkbox"
+                name="Friday Attendance"
+                onChange={_handleAttendanceChange.bind(this, delegates, country, 1)}
+              />
+            </label>
+          </td>
+          <td>
+            <label name="session">
+              <input
+                className="choice"
+                type="checkbox"
+                name="Saturday Morning Attendance"
+              />
+            </label>
+          </td>
+          <td>
+            <label name="session">
+              <input
+                className="choice"
+                type="checkbox"
+                name="Saturday Afternoon Attendance"
+              />
+            </label>
+          </td>
+          <td>
+            <label name="session">
+              <input
+                className="choice"
+                type="checkbox"
+                name="Sunday Attendance"
+              />
+            </label>
+          </td>
+        </tr>
+      );
+    });
+  },
+
+  _handleAttendanceChange: function(delegates, session, country, event) {
+    var assigmnents = this.state.assignments;
+    for (var delegate in delegates) {
+      delegate[session] = event.target.value;
+    }
+    assignments[country] = delegates;
+    this.setState({
+      assignments: assignments
+    });
+  }, 
+
+  _handleSaveAttendance: function(event) {
+    for (var country in this.state.assignments) {
+      for (var delegate in this.state.assignments[country]) {
+        DelegateStore.updateDelegate(delegate.id, {
+          sessionOneAttendance: delegate.sessionOneAttendance,
+          sessionTwoAttendance: delegate.sessionTwoAttendance,
+          sessionThreeAttendance: delegate.sessionThreeAttendance});
+      }
+    }
+    event.preventDefault();
   },
 
 });
