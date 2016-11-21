@@ -13,6 +13,7 @@ var {Store} = require('flux/utils');
 
 
 var _schoolsDelegates = {};
+var _committeeDelegates = {};
 var _delegates = {};
 
 class DelegateStore extends Store {
@@ -23,6 +24,23 @@ class DelegateStore extends Store {
 
     ServerAPI.getDelegates(schoolID).then(value => {
       _schoolsDelegates[schoolID] = value;
+      for (const delegate of value) {
+        _delegates[delegate.id] = delegate;
+      }
+      DelegateActions.delegatesFetched();
+    });
+
+    return [];
+  }
+
+  getCommitteeDelegates(committeeID) {
+    if (_committeeDelegates[committeeID]) {
+      return _committeeDelegates[committeeID];
+    }
+
+    ServerAPI.getCommitteeDelegates(committeeID).then(value => {
+      console.log(value);
+      _committeeDelegates[committeeID] = value;
       for (const delegate of value) {
         _delegates[delegate.id] = delegate;
       }

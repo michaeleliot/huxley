@@ -21,9 +21,12 @@ var ChairAttendanceView = React.createClass({
   ],
 
   getInitialState: function() {
+    var user = CurrentUserStore.getCurrentUser();
+    console.log(user);
+    var delegates = DelegateStore.getCommitteeDelegates(user.committee)
     return {
       assigments: {},
-      delegates: [],
+      delegates: delegates,
     };
   },
 
@@ -32,14 +35,16 @@ var ChairAttendanceView = React.createClass({
     if (!User.isChair(user)) {
       this.history.pushState(null, '/');
     }
+  },
 
-    DelegateStore.getCommitteeDelegates(user.committee.id, (delegates) => {
-      this.setState({
-        delegates: delegates
-      });
+  componentDidMount: function() {
+    this._delegatesToken = DelegateStore.addListener(() => {
+      var committeeID =  CurrentUserStore.getCurrentUser().committee.id;
+      var delegates = DelegateStore.getCommitteeDelegates(committeeID);
+      this.setState({delegates: delegates});
     });
 
-    for (delegate of delegates) {
+    /*for (delegate of delegates) {
       var assignments = this.state.assignments;
       var country = delegate.assignment.country.id;
       if (country in assigments) {
@@ -51,7 +56,12 @@ var ChairAttendanceView = React.createClass({
       this.setState({
         assignments: assignments
       });
-    }
+    }*/
+    
+  },
+
+  componentWillUnmount: function() {
+    this._delegatesToken.remove();
   },
 
   render: function() {
@@ -89,13 +99,13 @@ var ChairAttendanceView = React.createClass({
   },
 
   renderAttendanceRows: function() {
-    var countries = Object.keys(this.state.assignments);
-    return countries.map((country) => {
-      var delegates = this.state.assignments[country];
+    var delegates = this.state.delegates;
+    console.log(delegates);
+    return delegates.map(delegate => {
       return (
         <tr>
           <td>
-            {country.name}
+            {delegate.name}
           </td>
           <td>
             <label name="session">
@@ -103,7 +113,7 @@ var ChairAttendanceView = React.createClass({
                 className="choice"
                 type="checkbox"
                 name="Friday Attendance"
-                onChange={_handleAttendanceChange.bind(this, delegates, country, 1)}
+                // onChange={_handleAttendanceChange.bind(this, delegates, country, 1)}
               />
             </label>
           </td>

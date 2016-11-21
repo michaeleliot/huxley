@@ -51,7 +51,7 @@ var ServerAPI = {
    * Get a list of all delegates for the given committee ID.
    */
   getCommitteeDelegates(committeeID) {
-    return _get(`/api/committees/${committeeID}/delegates`);
+    return _get(`/api/delegates/committee/${committeeID}`);
   },
 
   login(username, password) {
