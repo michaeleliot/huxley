@@ -5,6 +5,8 @@
 
 'use strict';
 
+var ActionConstants = require('constants/ActionConstants');
+var DelegateActions = require('actions/DelegateActions');
 var Dispatcher = require('dispatcher/Dispatcher');
 var ServerAPI = require('lib/ServerAPI');
 var {Store} = require('flux/utils');
@@ -55,20 +57,18 @@ class CommitteeStore extends Store {
       committeeID,
       JSON.stringify(delegates)
     )
-    for (const delegate of delegates) {
-      _delegates[delegate.id] = delegate;
-    }
-    _committeeDelegates[schoolID] = delegates;
+    _committeeDelegates[committeeID] = delegates;
   }
 
   __onDispatch(action) {
     switch (action.actionType) {
-      case ActionConstants.UPDATE_DELEGATES:
+      case ActionConstants.UPDATE_COMMITTEE_DELEGATES:
         this.updateDelegates(action.committeeID, action.delegates);
         break;
       default:
         return;
   }
+  this.__emitChange();
 };
 
 module.exports = new CommitteeStore(Dispatcher);
