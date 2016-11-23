@@ -39,7 +39,6 @@ class DelegateStore extends Store {
     }
 
     ServerAPI.getCommitteeDelegates(committeeID).then(value => {
-      console.log(value);
       _committeeDelegates[committeeID] = value;
       for (const delegate of value) {
         _delegates[delegate.id] = delegate;

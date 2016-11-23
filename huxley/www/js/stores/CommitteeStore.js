@@ -60,15 +60,10 @@ class CommitteeStore extends Store {
     _committeeDelegates[committeeID] = delegates;
   }
 
-  __onDispatch(action) {
-    switch (action.actionType) {
-      case ActionConstants.UPDATE_COMMITTEE_DELEGATES:
-        this.updateDelegates(action.committeeID, action.delegates);
-        break;
-      default:
-        return;
+   __onDispatch(action) {
+    // This method must be overwritten
+    return;
   }
-  this.__emitChange();
 };
 
 module.exports = new CommitteeStore(Dispatcher);
