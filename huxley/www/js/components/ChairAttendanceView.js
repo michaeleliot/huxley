@@ -21,9 +21,11 @@ var ChairAttendanceView = React.createClass({
   ],
 
   getInitialState: function() {
+    var user = CurrentUserStore.getCurrentUser();
+    var delegates = DelegateStore.getCommitteeDelegates(user.committee)
     return {
       assigments: {},
-      delegates: [],
+      delegates: delegates,
     };
   },
 
@@ -54,6 +56,36 @@ var ChairAttendanceView = React.createClass({
     }
   },
 
+<<<<<<< HEAD
+=======
+  componentDidMount: function() {
+    this._delegatesToken = DelegateStore.addListener(() => {
+      var committeeID =  CurrentUserStore.getCurrentUser().committee.id;
+      var delegates = DelegateStore.getCommitteeDelegates(committeeID);
+      this.setState({delegates: delegates});
+    });
+
+    /*for (delegate of delegates) {
+      var assignments = this.state.assignments;
+      var country = delegate.assignment.country.id;
+      if (country in assigments) {
+        var delegates = assignments[country];
+        delegates.push(delegate);
+      } else {
+        assignments[country] = [delegate];
+      }
+      this.setState({
+        assignments: assignments
+      });
+    }*/
+    
+  },
+
+  componentWillUnmount: function() {
+    this._delegatesToken.remove();
+  },
+
+>>>>>>> 801b2af3f4371efdc623a9c61499b3106b20bfe6
   render: function() {
     return (
       <InnerView>
@@ -89,6 +121,7 @@ var ChairAttendanceView = React.createClass({
   },
 
   renderAttendanceRows: function() {
+<<<<<<< HEAD
     var countries = Object.keys(this.state.assignments);
     return countries.map((country) => {
       var delegates = this.state.assignments[country];
@@ -96,6 +129,15 @@ var ChairAttendanceView = React.createClass({
         <tr>
           <td>
             {country.name}
+=======
+    var delegates = this.state.delegates;
+    console.log(delegates);
+    return delegates.map(delegate => {
+      return (
+        <tr>
+          <td>
+            {delegate.name}
+>>>>>>> 801b2af3f4371efdc623a9c61499b3106b20bfe6
           </td>
           <td>
             <label name="session">
@@ -103,7 +145,11 @@ var ChairAttendanceView = React.createClass({
                 className="choice"
                 type="checkbox"
                 name="Friday Attendance"
+<<<<<<< HEAD
                 onChange={_handleAttendanceChange.bind(this, delegates, country, 1)}
+=======
+                // onChange={_handleAttendanceChange.bind(this, delegates, country, 1)}
+>>>>>>> 801b2af3f4371efdc623a9c61499b3106b20bfe6
               />
             </label>
           </td>
@@ -151,7 +197,18 @@ var ChairAttendanceView = React.createClass({
   }, 
 
   _handleSaveAttendance: function(event) {
+<<<<<<< HEAD
     // Needs to be filled in
+=======
+    for (var country in this.state.assignments) {
+      for (var delegate in this.state.assignments[country]) {
+        DelegateStore.updateDelegate(delegate.id, {
+          sessionOneAttendance: delegate.sessionOneAttendance,
+          sessionTwoAttendance: delegate.sessionTwoAttendance,
+          sessionThreeAttendance: delegate.sessionThreeAttendance});
+      }
+    }
+>>>>>>> 801b2af3f4371efdc623a9c61499b3106b20bfe6
     event.preventDefault();
   },
 
