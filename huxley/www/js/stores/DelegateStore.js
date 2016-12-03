@@ -108,7 +108,7 @@ class DelegateStore extends Store {
         this.updateDelegates(action.schoolID, action.delegates);
         break;
       case ActionConstants.UPDATE_COMMITTEE_DELEGATES:
-        this.updateDelegates(action.schoolID, action.delegates);
+        this.updateCommitteeDelegates(action.committeeID, action.delegates);
         break;
       default:
         return;
