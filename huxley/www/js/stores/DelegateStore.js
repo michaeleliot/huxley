@@ -37,7 +37,7 @@ class DelegateStore extends Store {
     if (_committeeDelegates[committeeID]) {
       return _committeeDelegates[committeeID];
     }
-
+    
     ServerAPI.getCommitteeDelegates(committeeID).then(value => {
       _committeeDelegates[committeeID] = value;
       for (const delegate of value) {
@@ -80,6 +80,17 @@ class DelegateStore extends Store {
     _schoolsDelegates[schoolID] = delegates;
   }
 
+  updateCommitteeDelegates(committeeID, delegates) {
+    ServerAPI.updateCommitteeDelegates(
+      committeeID,
+      JSON.stringify(delegates)
+    )
+    for (const delegate of delegates) {
+      _delegates[delegate.id] = delegate;
+    }
+    _committeeDelegates[committeeID] = delegates;
+  }
+
   __onDispatch(action) {
     switch (action.actionType) {
       case ActionConstants.DELETE_DELEGATE:
@@ -94,6 +105,9 @@ class DelegateStore extends Store {
       case ActionConstants.DELEGATES_FETCHED:
         break;
       case ActionConstants.UPDATE_DELEGATES:
+        this.updateDelegates(action.schoolID, action.delegates);
+        break;
+      case ActionConstants.UPDATE_COMMITTEE_DELEGATES:
         this.updateDelegates(action.schoolID, action.delegates);
         break;
       default:

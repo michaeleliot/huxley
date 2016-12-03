@@ -30,7 +30,6 @@ class DelegateCommitteeDetail(generics.ListAPIView):
     permission_classes = (IsChairOrSuperuser,)
 
     def get_queryset(self):
-    	print("got here!")
         '''Filter schools by the given pk param.'''
         committee_id = self.kwargs.get('pk', None)
         print(committee_id)

@@ -27,6 +27,13 @@ var ServerAPI = {
   },
 
   /**
+   * Get a list of all assignments for the given school ID.
+   */
+  getCommitteeAssignments(committeeID) {
+    return _get(`/api/assignments/committee/${committeeID}`);
+  },
+
+  /**
    * Get a list of all committees.
    */
   getCommittees() {
