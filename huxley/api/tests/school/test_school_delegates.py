@@ -24,22 +24,18 @@ class SchoolDelegateGetTestCase(ListAPITestCase):
         self.assignment1 = TestAssignments.new_assignment(
             committee=self.committee1,
             country=self.country,
-            school=self.school,
-        )
+            school=self.school, )
         self.assignment2 = TestAssignments.new_assignment(
             committee=self.committee2,
             country=self.country,
-            school=self.school,
-        )
+            school=self.school, )
         self.delegate1 = TestDelegates.new_delegate(
-            assignment=self.assignment1,
-        )
+            assignment=self.assignment1, )
         self.delegate2 = TestDelegates.new_delegate(
             assignment=self.assignment2,
             name='Trevor Dowds',
             email='t@dowds.com',
-            summary='Good!'
-        )
+            summary='Good!')
 
     def test_anonymous_user(self):
         '''It rejects a request from an anonymous user.'''
@@ -74,7 +70,8 @@ class SchoolDelegateGetTestCase(ListAPITestCase):
         '''Assert that the response contains the delegates in order.'''
         response.data[0].pop('created_at')
         response.data[1].pop('created_at')
-        self.assertEqual(dict(response.data[0]),
+        self.assertEqual(
+            dict(response.data[0]),
             {
                 'id': self.delegate1.id,
                 'assignment': self.assignment1.id,
@@ -86,9 +83,9 @@ class SchoolDelegateGetTestCase(ListAPITestCase):
                 'saturday_morning_attendance': False,
                 'saturday_afternoon_attendance': False,
                 'sunday_attendance': False,
-            },
-        )
-        self.assertEqual(dict(response.data[1]),
+            }, )
+        self.assertEqual(
+            dict(response.data[1]),
             {
                 'id': self.delegate2.id,
                 'assignment': self.assignment2.id,
@@ -100,8 +97,8 @@ class SchoolDelegateGetTestCase(ListAPITestCase):
                 'saturday_morning_attendance': False,
                 'saturday_afternoon_attendance': False,
                 'sunday_attendance': False,
-            },
-        )
+            }, )
+
 
 class SchoolDelegateListPartialUpdateTestCase(PartialUpdateAPITestCase):
     url_name = 'api:school_delegates'
@@ -117,43 +114,35 @@ class SchoolDelegateListPartialUpdateTestCase(PartialUpdateAPITestCase):
         self.committee4 = TestCommittees.new_committee()
 
         self.assignment1 = TestAssignments.new_assignment(
-            school=self.school,
-            country=self.country,
-            commitee=self.committee3
-        )
+            school=self.school, country=self.country, commitee=self.committee3)
 
         self.assignment2 = TestAssignments.new_assignment(
             school=self.school,
             country=self.country,
-            committee=self.committee2
-        )
+            committee=self.committee2)
 
         self.new_assignment = TestAssignments.new_assignment(
             school=self.school,
             country=self.country,
-            committee=self.committee3
-        )
+            committee=self.committee3)
 
         self.faulty_assignment = TestAssignments.new_assignment(
-            country=self.country,
-            committee=self.committee4
-        )
+            country=self.country, committee=self.committee4)
 
         self.delegate1 = TestDelegates.new_delegate(
             name="Nathaniel Parke",
             school=self.school,
-            assignment=self.assignment1
-        )
+            assignment=self.assignment1)
 
         self.delegate2 = TestDelegates.new_delegate(
             name='Trevor Dowds',
             school=self.school,
-            assignment=self.assignment2
-        )
+            assignment=self.assignment2)
 
         self.params = [
-            {'id': self.delegate1.id, 'assignment': self.new_assignment.id},
-            {'id': self.delegate2.id, 'assignment': None}
+            {'id': self.delegate1.id,
+             'assignment': self.new_assignment.id}, {'id': self.delegate2.id,
+                                                     'assignment': None}
         ]
 
     def test_anonymous_user(self):
@@ -166,7 +155,8 @@ class SchoolDelegateListPartialUpdateTestCase(PartialUpdateAPITestCase):
         self.client.login(username='regular', password='user')
 
         response = self.get_response(self.school.id)
-        self.assertEqual(dict(response.data[0]),
+        self.assertEqual(
+            dict(response.data[0]),
             {
                 'id': self.delegate1.id,
                 'assignment': self.params[0]['assignment'],
@@ -176,12 +166,14 @@ class SchoolDelegateListPartialUpdateTestCase(PartialUpdateAPITestCase):
                 'summary': unicode(self.delegate1.summary),
                 'created_at': self.delegate1.created_at.isoformat(),
                 'friday_attendance': self.delegate1.friday_attendance,
-                'saturday_morning_attendance': self.delegate1.saturday_morning_attendance,
-                'saturday_afternoon_attendance': self.delegate1.saturday_afternoon_attendance,
+                'saturday_morning_attendance':
+                self.delegate1.saturday_morning_attendance,
+                'saturday_afternoon_attendance':
+                self.delegate1.saturday_afternoon_attendance,
                 'sunday_attendance': self.delegate1.sunday_attendance,
-            },
-        )
-        self.assertEqual(dict(response.data[1]),
+            }, )
+        self.assertEqual(
+            dict(response.data[1]),
             {
                 'id': self.delegate2.id,
                 'assignment': self.params[1]['assignment'],
@@ -191,11 +183,12 @@ class SchoolDelegateListPartialUpdateTestCase(PartialUpdateAPITestCase):
                 'summary': unicode(self.delegate2.summary),
                 'created_at': self.delegate2.created_at.isoformat(),
                 'friday_attendance': self.delegate2.friday_attendance,
-                'saturday_morning_attendance': self.delegate2.saturday_morning_attendance,
-                'saturday_afternoon_attendance': self.delegate2.saturday_afternoon_attendance,
+                'saturday_morning_attendance':
+                self.delegate2.saturday_morning_attendance,
+                'saturday_afternoon_attendance':
+                self.delegate2.saturday_afternoon_attendance,
                 'sunday_attendance': self.delegate2.sunday_attendance,
-            },
-        )
+            }, )
 
     def test_advisor_fail(self):
         '''
@@ -204,8 +197,10 @@ class SchoolDelegateListPartialUpdateTestCase(PartialUpdateAPITestCase):
         '''
         self.client.login(username='regular', password='user')
         self.params = [
-            {'id': self.delegate1.id, 'assignment': self.faulty_assignment.id},
-            {'id': self.delegate2.id, 'assignment': self.new_assignment.id}
+            {'id': self.delegate1.id,
+             'assignment': self.faulty_assignment.id},
+            {'id': self.delegate2.id,
+             'assignment': self.new_assignment.id}
         ]
 
         self.assertRaises(ValidationError, self.get_response, self.school.id)
@@ -225,7 +220,8 @@ class SchoolDelegateListPartialUpdateTestCase(PartialUpdateAPITestCase):
         self.client.login(username='test', password='user')
 
         response = self.get_response(self.school.id)
-        self.assertEqual(dict(response.data[0]),
+        self.assertEqual(
+            dict(response.data[0]),
             {
                 'id': self.delegate1.id,
                 'assignment': self.params[0]['assignment'],
@@ -235,12 +231,14 @@ class SchoolDelegateListPartialUpdateTestCase(PartialUpdateAPITestCase):
                 'summary': unicode(self.delegate1.summary),
                 'created_at': self.delegate1.created_at.isoformat(),
                 'friday_attendance': self.delegate1.friday_attendance,
-                'saturday_morning_attendance': self.delegate1.saturday_morning_attendance,
-                'saturday_afternoon_attendance': self.delegate1.saturday_afternoon_attendance,
+                'saturday_morning_attendance':
+                self.delegate1.saturday_morning_attendance,
+                'saturday_afternoon_attendance':
+                self.delegate1.saturday_afternoon_attendance,
                 'sunday_attendance': self.delegate1.sunday_attendance,
-            },
-        )
-        self.assertEqual(dict(response.data[1]),
+            }, )
+        self.assertEqual(
+            dict(response.data[1]),
             {
                 'id': self.delegate2.id,
                 'assignment': self.params[1]['assignment'],
@@ -250,11 +248,12 @@ class SchoolDelegateListPartialUpdateTestCase(PartialUpdateAPITestCase):
                 'summary': unicode(self.delegate2.summary),
                 'created_at': self.delegate2.created_at.isoformat(),
                 'friday_attendance': self.delegate2.friday_attendance,
-                'saturday_morning_attendance': self.delegate2.saturday_morning_attendance,
-                'saturday_afternoon_attendance': self.delegate2.saturday_afternoon_attendance,
+                'saturday_morning_attendance':
+                self.delegate2.saturday_morning_attendance,
+                'saturday_afternoon_attendance':
+                self.delegate2.saturday_afternoon_attendance,
                 'sunday_attendance': self.delegate2.sunday_attendance,
-            },
-        )
+            }, )
 
     def test_superuser_fail(self):
         '''
@@ -262,8 +261,10 @@ class SchoolDelegateListPartialUpdateTestCase(PartialUpdateAPITestCase):
         '''
         self.client.login(username='regular', password='user')
         self.params = [
-            {'id': self.delegate1.id, 'assignment': self.faulty_assignment.id},
-            {'id': self.delegate2.id, 'assignment': self.new_assignment.id}
+            {'id': self.delegate1.id,
+             'assignment': self.faulty_assignment.id},
+            {'id': self.delegate2.id,
+             'assignment': self.new_assignment.id}
         ]
 
         self.assertRaises(ValidationError, self.get_response, self.school.id)

@@ -11,26 +11,27 @@ from huxley.core.models import Assignment
 
 
 class AssignmentList(generics.CreateAPIView):
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, )
     queryset = Assignment.objects.all()
-    permission_classes = (IsSuperuserOrReadOnly,)
+    permission_classes = (IsSuperuserOrReadOnly, )
     serializer_class = AssignmentSerializer
 
 
 class AssignmentDetail(generics.RetrieveUpdateAPIView):
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, )
     queryset = Assignment.objects.all()
-    permission_classes = (IsSchoolAssignmentAdvisorOrSuperuser,)
+    permission_classes = (IsSchoolAssignmentAdvisorOrSuperuser, )
     serializer_class = AssignmentSerializer
 
     def put(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
 
+
 class AssignmentCommitteeDetail(generics.ListAPIView):
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, )
     queryset = Assignment.objects.all()
     serializer_class = AssignmentSerializer
-    permission_classes = (IsChairOrSuperuser,)
+    permission_classes = (IsChairOrSuperuser, )
 
     def get_queryset(self):
         '''Filter schools by the given pk param.'''
