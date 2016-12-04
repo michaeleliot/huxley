@@ -82,6 +82,10 @@ class SchoolDelegateGetTestCase(ListAPITestCase):
                 'name': unicode(self.delegate1.name),
                 'email': unicode(self.delegate1.email),
                 'summary': unicode(self.delegate1.summary),
+                'friday_attendance': False,
+                'saturday_morning_attendance': False,
+                'saturday_afternoon_attendance': False,
+                'sunday_attendance': False,
             },
         )
         self.assertEqual(dict(response.data[1]),
@@ -92,6 +96,10 @@ class SchoolDelegateGetTestCase(ListAPITestCase):
                 'name': unicode(self.delegate2.name),
                 'email': unicode(self.delegate2.email),
                 'summary': unicode(self.delegate2.summary),
+                'friday_attendance': False,
+                'saturday_morning_attendance': False,
+                'saturday_afternoon_attendance': False,
+                'sunday_attendance': False,
             },
         )
 
@@ -166,7 +174,11 @@ class SchoolDelegateListPartialUpdateTestCase(PartialUpdateAPITestCase):
                 'name': unicode(self.delegate1.name),
                 'email': unicode(self.delegate1.email),
                 'summary': unicode(self.delegate1.summary),
-                'created_at': self.delegate1.created_at.isoformat()
+                'created_at': self.delegate1.created_at.isoformat(),
+                'friday_attendance': self.delegate1.friday_attendance,
+                'saturday_morning_attendance': self.delegate1.saturday_morning_attendance,
+                'saturday_afternoon_attendance': self.delegate1.saturday_afternoon_attendance,
+                'sunday_attendance': self.delegate1.sunday_attendance,
             },
         )
         self.assertEqual(dict(response.data[1]),
@@ -177,7 +189,11 @@ class SchoolDelegateListPartialUpdateTestCase(PartialUpdateAPITestCase):
                 'name': unicode(self.delegate2.name),
                 'email': unicode(self.delegate2.email),
                 'summary': unicode(self.delegate2.summary),
-                'created_at': self.delegate2.created_at.isoformat()
+                'created_at': self.delegate2.created_at.isoformat(),
+                'friday_attendance': self.delegate2.friday_attendance,
+                'saturday_morning_attendance': self.delegate2.saturday_morning_attendance,
+                'saturday_afternoon_attendance': self.delegate2.saturday_afternoon_attendance,
+                'sunday_attendance': self.delegate2.sunday_attendance,
             },
         )
 
@@ -217,7 +233,11 @@ class SchoolDelegateListPartialUpdateTestCase(PartialUpdateAPITestCase):
                 'name': unicode(self.delegate1.name),
                 'email': unicode(self.delegate1.email),
                 'summary': unicode(self.delegate1.summary),
-                'created_at': self.delegate1.created_at.isoformat()
+                'created_at': self.delegate1.created_at.isoformat(),
+                'friday_attendance': self.delegate1.friday_attendance,
+                'saturday_morning_attendance': self.delegate1.saturday_morning_attendance,
+                'saturday_afternoon_attendance': self.delegate1.saturday_afternoon_attendance,
+                'sunday_attendance': self.delegate1.sunday_attendance,
             },
         )
         self.assertEqual(dict(response.data[1]),
@@ -228,7 +248,11 @@ class SchoolDelegateListPartialUpdateTestCase(PartialUpdateAPITestCase):
                 'name': unicode(self.delegate2.name),
                 'email': unicode(self.delegate2.email),
                 'summary': unicode(self.delegate2.summary),
-                'created_at': self.delegate2.created_at.isoformat()
+                'created_at': self.delegate2.created_at.isoformat(),
+                'friday_attendance': self.delegate2.friday_attendance,
+                'saturday_morning_attendance': self.delegate2.saturday_morning_attendance,
+                'saturday_afternoon_attendance': self.delegate2.saturday_afternoon_attendance,
+                'sunday_attendance': self.delegate2.sunday_attendance,
             },
         )
 
