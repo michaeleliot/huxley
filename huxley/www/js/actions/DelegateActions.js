@@ -45,7 +45,16 @@ var DelegateActions = {
       schoolID: schoolID,
       delegates: delegates
     });
+  },
+
+  updateCommitteeDelegates(committeeID, delegates) {
+    Dispatcher.dispatch({
+      actionType: ActionConstants.UPDATE_COMMITTEE_DELEGATES,
+      committeeID: committeeID,
+      delegates: delegates
+    })
   }
+
 };
 
 module.exports = DelegateActions;
