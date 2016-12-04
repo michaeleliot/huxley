@@ -40,9 +40,8 @@ var ChairAttendanceView = React.createClass({
   componentDidMount() {
     var user = CurrentUserStore.getCurrentUser();
     var country_assignments = this.state.country_assignments;
-
+    
     this._handleGetAssignments();
-
     CountryStore.getCountries(function(countries) {
       countries = countries.filter(country => 
         country.id in country_assignments
