@@ -12,23 +12,32 @@ from huxley.core.models import Delegate
 
 
 class DelegateList(generics.CreateAPIView):
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, )
     queryset = Delegate.objects.all()
-    permission_classes = (IsPostOrSuperuserOnly,)
+    permission_classes = (IsPostOrSuperuserOnly, )
     serializer_class = DelegateSerializer
 
 
 class DelegateDetail(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (SessionAuthentication, )
     queryset = Delegate.objects.all()
-    permission_classes = (IsSchoolDelegateAdvisorOrSuperuser,)
+    permission_classes = (IsSchoolDelegateAdvisorOrSuperuser, )
     serializer_class = DelegateSerializer
 
+<<<<<<< HEAD
 class DelegateCommitteeDetail(generics.ListAPIView, ListUpdateModelMixin):
     authentication_classes = (SessionAuthentication,)
     queryset = Delegate.objects.all()
     serializer_class = DelegateSerializer
     permission_classes = (IsChairOrSuperuser,)
+=======
+
+class DelegateCommitteeDetail(generics.ListAPIView, ListUpdateModelMixin):
+    authentication_classes = (SessionAuthentication, )
+    queryset = Delegate.objects.all()
+    serializer_class = DelegateSerializer
+    permission_classes = (IsChairOrSuperuser, )
+>>>>>>> 51e3a3a85781b47f6dc44f6bec10b7a87a589095
 
     def get_queryset(self):
         '''Filter schools by the given pk param.'''
@@ -38,5 +47,9 @@ class DelegateCommitteeDetail(generics.ListAPIView, ListUpdateModelMixin):
         return Delegate.objects.filter(assignment__committee_id=committee_id)
 
     def patch(self, request, *args, **kwargs):
+<<<<<<< HEAD
         print "****************************************************************"
         return self.list_update(request, partial=True, *args, **kwargs)
+=======
+        return self.list_update(request, partial=True, *args, **kwargs)
+>>>>>>> 51e3a3a85781b47f6dc44f6bec10b7a87a589095

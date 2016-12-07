@@ -35,6 +35,14 @@ class IsChairOrSuperuser(permissions.BasePermission):
         return request.user.is_superuser or request.user == obj.chair
 
 
+class IsChairOrSuperuser(permissions.BasePermission):
+    '''Accept only the school's advisor or superusers.'''
+
+    def has_object_permission(self, request, view, obj):
+        print(obj)
+        return request.user.is_superuser or request.user == obj.chair
+
+
 class IsSchoolAdvisorOrSuperuser(permissions.BasePermission):
     '''Accept only the advisor of the given school_id query param.'''
 
@@ -69,6 +77,7 @@ class IsSchoolAssignmentAdvisorOrSuperuser(permissions.BasePermission):
 
         return (user.is_authenticated() and user.is_advisor() and
                 user.school.id == assignment.school.id)
+
 
 class IsSchoolDelegateAdvisorOrSuperuser(permissions.BasePermission):
     '''Accept only the advisor of the given school with a given assignment.'''
