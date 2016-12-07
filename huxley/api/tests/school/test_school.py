@@ -18,11 +18,10 @@ class SchoolDetailGetTestCase(auto.RetrieveAPIAutoTestCase):
         self.do_test(expected_error=auto.EXP_NOT_AUTHENTICATED)
 
     def test_advisor(self):
-        self.do_test(username=self.object.advisor.username, password='test')
+        self.as_user(self.object.advisor).do_test()
 
     def test_superuser(self):
-        TestUsers.new_superuser(username='user1', password='user1')
-        self.do_test(username='user1', password='user1'),
+        self.as_superuser().do_test()
 
 
 class SchoolDetailPatchTestCase(tests.PartialUpdateAPITestCase):
@@ -86,19 +85,15 @@ class SchoolDetailDeleteTestCase(auto.DestroyAPIAutoTestCase):
 
     def test_advisor(self):
         '''Advisors can delete their school.'''
-        self.do_test(username=self.object.advisor.username, password='test')
+        self.as_user(self.object.advisor).do_test()
 
     def test_other_user(self):
         '''A user cannot delete another user's school.'''
-        TestUsers.new_user(username='joe', password='schmoe')
-        self.do_test(
-            username='joe', password='schmoe',
-            expected_error=auto.EXP_PERMISSION_DENIED)
+        self.as_default_user().do_test(expected_error=auto.EXP_PERMISSION_DENIED)
 
     def test_superuser(self):
         '''A superuser can delete a school.'''
-        TestUsers.new_superuser(username='superuser', password='superuser')
-        self.do_test(username='superuser', password='superuser')
+        self.as_superuser().do_test()
 
 
 class SchoolListGetTestCase(tests.ListAPITestCase):

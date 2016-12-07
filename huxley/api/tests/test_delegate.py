@@ -12,20 +12,16 @@ class DelegateDetailGetTestCase(auto.RetrieveAPIAutoTestCase):
 
     @classmethod
     def get_test_object(cls):
-        user = TestUsers.new_user(username='user', password='user')
-        school = TestSchools.new_school(user=user)
-        assignment = TestAssignments.new_assignment(school=school)
-        return TestDelegates.new_delegate(assignment=assignment)
+        return TestDelegates.new_delegate()
 
     def test_anonymous_user(self):
         self.do_test(expected_error=auto.EXP_NOT_AUTHENTICATED)
 
     def test_advisor(self):
-        self.do_test(username='user', password='user')
+        self.as_user(self.object.school.advisor).do_test()
 
     def test_superuser(self):
-        TestUsers.new_superuser(username='superuser', password='superuser')
-        self.do_test(username='superuser', password='superuser')
+        self.as_superuser().do_test()
 
 
 class DelegateDetailPutTestCase(tests.UpdateAPITestCase):
@@ -138,22 +134,16 @@ class DelegateDetailDeleteTestCase(auto.DestroyAPIAutoTestCase):
 
     def test_advisor(self):
         '''Advisors can delete their delegates.'''
-        self.do_test(
-            username=self.object.school.advisor.username,
-            password='test')
+        self.as_user(self.object.school.advisor).do_test()
 
     def test_other_user(self):
         '''A user cannot delete another user's delegates.'''
-        joe = TestUsers.new_user(username='joe', password='schmoe')
-        TestSchools.new_school(user=joe)
-        self.do_test(
-            username='joe', password='schmoe',
-            expected_error=auto.EXP_PERMISSION_DENIED)
+        TestSchools.new_school(user=self.default_user)
+        self.as_default_user().do_test(expected_error=auto.EXP_PERMISSION_DENIED)
 
     def test_superuser(self):
         '''A superuser can delete delegates.'''
-        TestUsers.new_superuser(username='super', password='super')
-        self.do_test(username='super', password='super')
+        self.as_superuser().do_test()
 
 
 class DelegateListCreateTestCase(tests.CreateAPITestCase):

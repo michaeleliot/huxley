@@ -12,6 +12,7 @@ var {Store} = require('flux/utils');
 
 
 var _assignmentPromises = {};
+var _committeeAssignments = {};
 
 class AssignmentStore extends Store {
   getAssignments(schoolID, callback) {
@@ -22,6 +23,19 @@ class AssignmentStore extends Store {
       _assignmentPromises[schoolID].then(callback);
     }
     return _assignmentPromises[schoolID];
+  }
+
+  getCommitteeAssignments(committeeID, callback) {
+    if (!_committeeAssignments[committeeID]) {
+      _committeeAssignments[committeeID] = ServerAPI.getCommitteeAssignments(committeeID);
+    }
+
+    if (callback) {
+      _committeeAssignments[committeeID].then(callback);
+    }
+
+    return _committeeAssignments[committeeID];
+
   }
 
   __onDispatch(action) {

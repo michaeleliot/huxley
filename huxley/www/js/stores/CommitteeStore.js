@@ -5,7 +5,8 @@
 
 'use strict';
 
-var $ = require('jquery');
+var ActionConstants = require('constants/ActionConstants');
+var DelegateActions = require('actions/DelegateActions');
 var Dispatcher = require('dispatcher/Dispatcher');
 var ServerAPI = require('lib/ServerAPI');
 var {Store} = require('flux/utils');
@@ -34,7 +35,7 @@ class CommitteeStore extends Store {
     return p;
   }
 
-  __onDispatch(action) {
+   __onDispatch(action) {
     // This method must be overwritten
     return;
   }
