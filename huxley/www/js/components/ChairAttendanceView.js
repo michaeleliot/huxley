@@ -100,8 +100,8 @@ var ChairAttendanceView = React.createClass({
                 className="choice"
                 type="checkbox"
                 name="Friday Attendance"
-                checked={this.state.country_assignments[country][0].friday_attendance}
-                onChange={this._handleAttendanceChange.bind(this, "friday_attendance", country)}
+                checked={this.state.country_assignments[country][0].session_one}
+                onChange={this._handleAttendanceChange.bind(this, "session_one", country)}
               />
             </label>
           </td>
@@ -111,8 +111,8 @@ var ChairAttendanceView = React.createClass({
                 className="choice"
                 type="checkbox"
                 name="Saturday Morning Attendance"
-                checked={this.state.country_assignments[country][0].saturday_morning_attendance}
-                onChange={this._handleAttendanceChange.bind(this, "saturday_morning_attendance", country)}
+                checked={this.state.country_assignments[country][0].session_two}
+                onChange={this._handleAttendanceChange.bind(this, "session_two", country)}
               />
             </label>
           </td>
@@ -122,8 +122,8 @@ var ChairAttendanceView = React.createClass({
                 className="choice"
                 type="checkbox"
                 name="Saturday Afternoon Attendance"
-                checked={this.state.country_assignments[country][0].saturday_afternoon_attendance}
-                onChange={this._handleAttendanceChange.bind(this, "saturday_afternoon_attendance", country)}
+                checked={this.state.country_assignments[country][0].session_three}
+                onChange={this._handleAttendanceChange.bind(this, "session_three", country)}
               />
             </label>
           </td>
@@ -133,8 +133,8 @@ var ChairAttendanceView = React.createClass({
                 className="choice"
                 type="checkbox"
                 name="Sunday Attendance"
-                checked={this.state.country_assignments[country][0].sunday_attendance}
-                onChange={this._handleAttendanceChange.bind(this, "sunday_attendance", country)}
+                checked={this.state.country_assignments[country][0].ssession_four}
+                onChange={this._handleAttendanceChange.bind(this, "session_four", country)}
               />
             </label>
           </td>
@@ -158,16 +158,15 @@ var ChairAttendanceView = React.createClass({
 
   _handleCountryMappings() {
     var country_assignments = this.state.country_assignments;
-    CountryStore.getCountries(function(countries) {
-      countries = countries.filter(country => 
-        country.id in country_assignments
-      );
-      for (var country of countries) {
-        country_assignments[country.name] = country_assignments[country.id];
-        delete country_assignments[country.id];
-      }
-      this.setState({country_assignments: country_assignments});
-    }.bind(this));
+    var countries = Object.values(CountryStore.getCountries());
+    countries = countries.filter(country => 
+      country.id in country_assignments
+    );
+    for (var country of countries) {
+      country_assignments[country.name] = country_assignments[country.id];
+      delete country_assignments[country.id];
+    }
+    this.setState({country_assignments: country_assignments});
   },
 
   _handleGetAssignments() {

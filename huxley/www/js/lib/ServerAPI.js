@@ -86,7 +86,7 @@ var ServerAPI = {
   },
 
   updateCommitteeDelegates(committeeID, delegates) {
-    return _patch('/api/delegates/', delegates);
+    return _patch('/api/delegates', delegates);
   },
 
 };

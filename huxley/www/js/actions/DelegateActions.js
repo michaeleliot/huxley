@@ -52,7 +52,15 @@ var DelegateActions = {
       actionType: ActionConstants.UPDATE_COMMITTEE_DELEGATES,
       committeeID: committeeID,
       delegates: delegates
-    })
+    });
+  },
+
+  committeeDelegatesFetched(committeeID, delegates) {
+    Dispatcher.dispatch({
+      actionType: ActionConstants.COMMITTEE_DELEGATES_FETCHED,
+      committeeID: committeeID,
+      delegates: delegates
+    });
   }
 
 };
