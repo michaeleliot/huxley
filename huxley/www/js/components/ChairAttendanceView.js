@@ -25,6 +25,7 @@ var ChairAttendanceView = React.createClass({
 
   getInitialState() {
     return {
+      countries: CountryStore.getCountries(),
       country_assignments: {},
       loading: false,
     };
@@ -39,14 +40,17 @@ var ChairAttendanceView = React.createClass({
 
   componentDidMount() {
     this._handleGetAssignments();
-    this._handleCountryMappings();
     this._delegatesToken = DelegateStore.addListener(() => {
       this._handleGetAssignments();
-      this._handleCountryMappings();
+    });
+
+    this._countriesToken = CountryStore.addListener(() => {
+      this.setState({countries: CountryStore.getCountries()});
     });
   },
 
   componentWillUnmount() {
+    this._countriesToken && this._countriesToken.remove();
     this._delegatesToken && this._delegatesToken.remove();
   },
 
@@ -87,12 +91,13 @@ var ChairAttendanceView = React.createClass({
   },
 
   renderAttendanceRows() {
-    var countries = Object.keys(this.state.country_assignments);
-    return countries.map(country => {
+    var committeeCountries = Object.keys(this.state.country_assignments);
+    var countries = this.state.countries;
+    return committeeCountries.map(country => {
       return (
         <tr>
           <td>
-            {country}
+            {Object.keys(countries).length ? countries[parseInt(country)].name : country}
           </td>
           <td>
             <label name="session">
@@ -154,19 +159,6 @@ var ChairAttendanceView = React.createClass({
     this.setState({
       country_assignments: country_assignments
     });
-  },
-
-  _handleCountryMappings() {
-    var country_assignments = this.state.country_assignments;
-    var countries = Object.values(CountryStore.getCountries());
-    countries = countries.filter(country => 
-      country.id in country_assignments
-    );
-    for (var country of countries) {
-      country_assignments[country.name] = country_assignments[country.id];
-      delete country_assignments[country.id];
-    }
-    this.setState({country_assignments: country_assignments});
   },
 
   _handleGetAssignments() {
