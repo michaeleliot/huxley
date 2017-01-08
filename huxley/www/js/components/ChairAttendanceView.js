@@ -27,7 +27,6 @@ var ChairAttendanceView = React.createClass({
     return {
       countries: CountryStore.getCountries(),
       country_assignments: {},
-      loading: false,
     };
   },
 
@@ -138,7 +137,7 @@ var ChairAttendanceView = React.createClass({
                 className="choice"
                 type="checkbox"
                 name="Sunday Attendance"
-                checked={this.state.country_assignments[country][0].ssession_four}
+                checked={this.state.country_assignments[country][0].session_four}
                 onChange={this._handleAttendanceChange.bind(this, "session_four", country)}
               />
             </label>
@@ -163,7 +162,7 @@ var ChairAttendanceView = React.createClass({
 
   _handleGetAssignments() {
     var user = CurrentUserStore.getCurrentUser();
-    var country_assignments = this.state.country_assignments;
+    var country_assignments = {};
     var delegates = DelegateStore.getCommitteeDelegates(user.committee);
 
     AssignmentStore.getCommitteeAssignments(user.committee, function(assignments) {
@@ -184,7 +183,6 @@ var ChairAttendanceView = React.createClass({
   }, 
 
   _handleSaveAttendance(event) {
-    this.setState({loading: true});
     var committee = CurrentUserStore.getCurrentUser().committee;
     var country_assignments = this.state.country_assignments;
     var delegates = [];
@@ -192,6 +190,8 @@ var ChairAttendanceView = React.createClass({
       delegates = delegates.concat(country_assignments[country]);
     }
     DelegateActions.updateCommitteeDelegates(committee, delegates);
+    window.alert("Attendance Saved.");
+    event.preventDefault();
   },
 
 });
