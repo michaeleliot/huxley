@@ -14,6 +14,7 @@ var ConferenceContext = require('components/ConferenceContext');
 var CountryStore = require('stores/CountryStore');
 var CurrentUserStore = require('stores/CurrentUserStore');
 var DelegateActions = require('actions/DelegateActions');
+var DelegationAttendanceRow = require('components/DelegationAttendanceRow');
 var DelegateStore = require('stores/DelegateStore');
 var InnerView = require('components/InnerView');
 var User = require('utils/User');
@@ -92,80 +93,31 @@ var ChairAttendanceView = React.createClass({
   renderAttendanceRows() {
     var committeeCountries = Object.keys(this.state.country_assignments);
     var countries = this.state.countries;
-    return committeeCountries.map(country => {
-      return (
-        <tr>
-          <td>
-            {Object.keys(countries).length ? countries[parseInt(country)].name : country}
-          </td>
-          <td>
-            <label name="session">
-              <input
-                className="choice"
-                type="checkbox"
-                name="Friday Attendance"
-                checked={this.state.country_assignments[country][0].session_one}
-                onChange={this._handleAttendanceChange.bind(this, "session_one", country)}
-              />
-            </label>
-          </td>
-          <td>
-            <label name="session">
-              <input
-                className="choice"
-                type="checkbox"
-                name="Saturday Morning Attendance"
-                checked={this.state.country_assignments[country][0].session_two}
-                onChange={this._handleAttendanceChange.bind(this, "session_two", country)}
-              />
-            </label>
-          </td>
-          <td>
-            <label name="session">
-              <input
-                className="choice"
-                type="checkbox"
-                name="Saturday Afternoon Attendance"
-                checked={this.state.country_assignments[country][0].session_three}
-                onChange={this._handleAttendanceChange.bind(this, "session_three", country)}
-              />
-            </label>
-          </td>
-          <td>
-            <label name="session">
-              <input
-                className="choice"
-                type="checkbox"
-                name="Sunday Attendance"
-                checked={this.state.country_assignments[country][0].session_four}
-                onChange={this._handleAttendanceChange.bind(this, "session_four", country)}
-              />
-            </label>
-          </td>
-        </tr>
-      );
-    });
+    return committeeCountries.map(country => 
+      <DelegationAttendanceRow
+        onChange={this._handleAttendanceChange}
+        countryName={Object.keys(countries).length ? countries[country].name : country}
+        countryID={country}
+        delegates={this.state.country_assignments[country]}
+      />
+    );
   },
 
   _handleAttendanceChange(session, country, event) {
     var country_assignments = this.state.country_assignments;
     var delegates = country_assignments[country];
-
     for (var delegate of delegates) {
       delegate[session] = !delegate[session];
     }
-    country_assignments[country] = delegates;
-    this.setState({
-      country_assignments: country_assignments
-    });
+
+    this.setState({country_assignments: country_assignments});
   },
 
   _handleGetAssignments() {
     var user = CurrentUserStore.getCurrentUser();
     var country_assignments = {};
     var delegates = DelegateStore.getCommitteeDelegates(user.committee);
-
-    AssignmentStore.getCommitteeAssignments(user.committee, function(assignments) {
+    AssignmentStore.getCommitteeAssignments(user.committee, assignments => {
         for (var delegate of delegates) {
           var assignment = assignments.find(assignment => assignment.id == delegate.assignment)
           var countryID = assignment.country;
@@ -179,7 +131,7 @@ var ChairAttendanceView = React.createClass({
           country_assignments: country_assignments,
           assignments: assignments,
         });
-      }.bind(this));
+      });
   }, 
 
   _handleSaveAttendance(event) {
