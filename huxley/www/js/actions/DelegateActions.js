@@ -31,10 +31,9 @@ var DelegateActions = {
     });
   },
 
-  delegatesFetched(schoolID, delegates) {
+  delegatesFetched(delegates) {
     Dispatcher.dispatch({
       actionType: ActionConstants.DELEGATES_FETCHED,
-      schoolID: schoolID,
       delegates: delegates,
     });
   },
@@ -54,14 +53,6 @@ var DelegateActions = {
       delegates: delegates
     });
   },
-
-  committeeDelegatesFetched(committeeID, delegates) {
-    Dispatcher.dispatch({
-      actionType: ActionConstants.COMMITTEE_DELEGATES_FETCHED,
-      committeeID: committeeID,
-      delegates: delegates
-    });
-  }
 
 };
 

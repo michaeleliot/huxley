@@ -9,10 +9,9 @@ var ActionConstants = require('constants/ActionConstants');
 var Dispatcher = require('dispatcher/Dispatcher');
 
 var AssignmentActions = {
-  assignmentsFetched(schoolID, assignments) {
+  assignmentsFetched(assignments) {
     Dispatcher.dispatch({
       actionType: ActionConstants.ASSIGNMENTS_FETCHED,
-      schoolID: schoolID,
       assignments: assignments,
     });
   },
@@ -24,14 +23,6 @@ var AssignmentActions = {
       delta: delta,
     });
   },
-
-  committeeAssignmentsFetched(committeeID, assignments) {
-    Dispatcher.dispatch({
-      actionType: ActionConstants.COMMITTEE_ASSIGNMENTS_FETCHED,
-      committeeID: committeeID,
-      assignments: assignments,
-    })
-  }
 };
 
 module.exports = AssignmentActions;

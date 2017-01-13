@@ -12,53 +12,49 @@ var ServerAPI = require('lib/ServerAPI');
 var {Store} = require('flux/utils');
 
 
-var _schoolsDelegates = {};
-var _committeeDelegates = {};
 var _delegates = {};
 
 class DelegateStore extends Store {
-  getDelegates(schoolID) {
-    if (_schoolsDelegates[schoolID]) {
-      return _schoolsDelegates[schoolID];
+  getSchoolDelegates(schoolID) {
+    var delegateIDs = Object.keys(_delegates);
+    if (!delegateIDs.length) {
+      ServerAPI.getDelegates(schoolID).then(value => {
+        DelegateActions.delegatesFetched(value);
+      });
+
+      return [];
     }
 
-    ServerAPI.getDelegates(schoolID).then(value => {
-      DelegateActions.delegatesFetched(schoolID, value);
-    });
-
-    return [];
+    return delegateIDs.map(id => _delegates[id]);
   }
 
   getCommitteeDelegates(committeeID) {
-    if (_committeeDelegates[committeeID]) {
-      return _committeeDelegates[committeeID];
-    }
-    
-    ServerAPI.getCommitteeDelegates(committeeID).then(value => {
-      DelegateActions.committeeDelegatesFetched(committeeID, value);
-    });
+    var delegateIDs = Object.keys(_delegates);
+    if (!delegateIDs.length) {
+      ServerAPI.getCommitteeDelegates(committeeID).then(value => {
+        DelegateActions.delegatesFetched(value);
+      });
 
-    return [];
+      return [];
+    }
+
+    return delegateIDs.map(id => _delegates[id]);
   }
 
   deleteDelegate(delegateID) {
     ServerAPI.deleteDelegate(delegateID);
     var schoolID = _delegates[delegateID].school;
     delete _delegates[delegateID];
-    _schoolsDelegates[schoolID] = _schoolsDelegates[schoolID].filter(d => d.id !== delegateID);
   }
 
   addDelegate(delegate) {
     _delegates[delegate.id] = delegate;
-    _schoolsDelegates[delegate.school] = [..._schoolsDelegates[delegate.school], delegate];
   }
 
   updateDelegate(delegateID, delta) {
     const delegate = {..._delegates[delegateID], ...delta};
     ServerAPI.updateDelegate(delegateID, delegate);
     _delegates[delegateID] = delegate;
-    _schoolsDelegates[delegate.school] =
-      _schoolsDelegates[delegate.school].map(d => d.id == delegate.id ? delegate : d);
   }
 
   updateDelegates(schoolID, delegates) {
@@ -66,7 +62,6 @@ class DelegateStore extends Store {
     for (const delegate of delegates) {
       _delegates[delegate.id] = delegate;
     }
-    _schoolsDelegates[schoolID] = delegates;
   }
 
   updateCommitteeDelegates(committeeID, delegates) {
@@ -74,7 +69,6 @@ class DelegateStore extends Store {
     for (const delegate of delegates) {
       _delegates[delegate.id] = delegate;
     }
-    _committeeDelegates[committeeID] = delegates;
   }
 
   __onDispatch(action) {
@@ -89,7 +83,6 @@ class DelegateStore extends Store {
         this.updateDelegate(action.delegateID, action.delta);
         break;
       case ActionConstants.DELEGATES_FETCHED:
-        _schoolsDelegates[action.schoolID] = action.delegates;
         for (const delegate of action.delegates) {
           _delegates[delegate.id] = delegate;
         }
@@ -100,11 +93,8 @@ class DelegateStore extends Store {
       case ActionConstants.UPDATE_COMMITTEE_DELEGATES:
         this.updateCommitteeDelegates(action.committeeID, action.delegates);
         break;
-      case ActionConstants.COMMITTEE_DELEGATES_FETCHED:
-        _committeeDelegates[action.committeeID] = action.delegates;
-        for (const delegate of action.delegates) {
-          _delegates[delegate.id] = delegate;
-        }
+      case ActionConstants.LOGOUT:
+        _delegates = {};
         break;
       default:
         return;

@@ -12,47 +12,44 @@ var ServerAPI = require('lib/ServerAPI');
 var {Store} = require('flux/utils');
 
 
-var _schoolsAssignments = {};
 var _assignments = {};
-var _committeeAssignments = {};
 
 class AssignmentStore extends Store {
-  getAssignments(schoolID) {
-    if (_schoolsAssignments[schoolID]) {
-      return _schoolsAssignments[schoolID];
+  getSchoolAssignments(schoolID) {
+    var assignmentIDs = Object.keys(_assignments)
+    if (!assignmentIDs.length) {
+      ServerAPI.getAssignments(schoolID).then(value => {
+        AssignmentActions.assignmentsFetched(value);
+      });
+
+      return [];
     }
 
-    ServerAPI.getAssignments(schoolID).then(value => {
-      AssignmentActions.assignmentsFetched(schoolID, value);
-    });
+    return assignmentIDs.map(id => _assignments[id]);
+  }
 
-    return [];
+  getCommitteeAssignments(committeeID) {
+    var assignmentIDs = Object.keys(_assignments)
+    if (!assignmentIDs.length) {
+      ServerAPI.getCommitteeAssignments(committeeID).then(value => {
+        AssignmentActions.assignmentsFetched(value);
+      });
+
+      return [];
+    }
+
+    return assignmentIDs.map(id => _assignments[id]);
   }
 
   updateAssignment(assignmentID, delta) {
     const assignment = {..._assignments[assignmentID], ...delta};
     ServerAPI.updateAssignment(assignmentID, assignment);
     _assignments[assignmentID] = assignment;
-    _schoolsAssignments[assignment.school] =
-      _schoolsAssignments[assignment.school].map(a => a.id == assignment.id ? assignment : a);
-  }
-
-  getCommitteeAssignments(committeeID) {
-    if (_committeeAssignments[committeeID]) {
-      return _committeeAssignments[committeeID]; 
-    }
-    ServerAPI.getCommitteeAssignments(committeeID).then(value => {
-      AssignmentActions.committeeAssignmentsFetched(committeeID, value);
-    });
-
-    return [];
-
   }
 
   __onDispatch(action) {
     switch (action.actionType) {
       case ActionConstants.ASSIGNMENTS_FETCHED:
-        _schoolsAssignments[action.schoolID] = action.assignments;
         for (const assignment of action.assignments) {
           _assignments[assignment.id] = assignment;
         }
@@ -60,11 +57,8 @@ class AssignmentStore extends Store {
       case ActionConstants.UPDATE_ASSIGNMENT:
         this.updateAssignment(action.assignmentID, action.delta);
         break;
-      case ActionConstants.COMMITTEE_ASSIGNMENTS_FETCHED:
-        _committeeAssignments[action.committeeID] = action.assignments;
-        for (const assignment of action.assignments) {
-          _assignments[assignment.id] = assignment;
-        }
+      case ActionConstants.LOGOUT:
+        _assignments = {};
         break;
       default:
         return;
