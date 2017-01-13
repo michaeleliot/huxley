@@ -23,6 +23,14 @@ var AssignmentActions = {
       assignmentID: assignmentID,
       delta: delta,
     });
+  },
+
+  committeeAssignmentsFetched(committeeID, assignments) {
+    Dispatcher.dispatch({
+      actionType: ActionConstants.COMMITTEE_ASSIGNMENTS_FETCHED,
+      committeeID: committeeID,
+      assignments: assignments,
+    })
   }
 };
 

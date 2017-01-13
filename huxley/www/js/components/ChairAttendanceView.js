@@ -25,9 +25,12 @@ var ChairAttendanceView = React.createClass({
   ],
 
   getInitialState() {
+    var user = CurrentUserStore.getCurrentUser();
     return {
+      assignments: AssignmentStore.getCommitteeAssignments(user.committee),
       countries: CountryStore.getCountries(),
       country_assignments: {},
+      delegates: DelegateStore.getCommitteeDelegates(user.committee),
     };
   },
 
@@ -39,9 +42,16 @@ var ChairAttendanceView = React.createClass({
   },
 
   componentDidMount() {
-    this._handleGetAssignments();
+    var user = CurrentUserStore.getCurrentUser();
+    this._handleMapAssignments();
     this._delegatesToken = DelegateStore.addListener(() => {
-      this._handleGetAssignments();
+      this.setState({delegates: DelegateStore.getCommitteeDelegates(user.committee)});
+      this._handleMapAssignments();
+    });
+
+    this._assignmentsToken = AssignmentStore.addListener(() => {
+      this.setState({assignments: AssignmentStore.getCommitteeAssignments(user.committee)});
+      this._handleMapAssignments();
     });
 
     this._countriesToken = CountryStore.addListener(() => {
@@ -52,6 +62,7 @@ var ChairAttendanceView = React.createClass({
   componentWillUnmount() {
     this._countriesToken && this._countriesToken.remove();
     this._delegatesToken && this._delegatesToken.remove();
+    this._assignmentsToken && this._assignmentsToken.remove();
   },
 
   render() {
@@ -105,33 +116,30 @@ var ChairAttendanceView = React.createClass({
 
   _handleAttendanceChange(session, country, event) {
     var country_assignments = this.state.country_assignments;
-    var delegates = country_assignments[country];
-    for (var delegate of delegates) {
+    var country_delegates = country_assignments[country];
+    for (var delegate of country_delegates) {
       delegate[session] = !delegate[session];
     }
 
     this.setState({country_assignments: country_assignments});
   },
 
-  _handleGetAssignments() {
+  _handleMapAssignments() {
     var user = CurrentUserStore.getCurrentUser();
     var country_assignments = {};
-    var delegates = DelegateStore.getCommitteeDelegates(user.committee);
-    AssignmentStore.getCommitteeAssignments(user.committee, assignments => {
-        for (var delegate of delegates) {
-          var assignment = assignments.find(assignment => assignment.id == delegate.assignment)
-          var countryID = assignment.country;
-          if (countryID in country_assignments) {
-            country_assignments[countryID].push(delegate)
-          } else {
-            country_assignments[countryID] = [delegate]
-          }
-        }
-        this.setState({
-          country_assignments: country_assignments,
-          assignments: assignments,
-        });
-      });
+    var delegates = this.state.delegates;
+    var assignments = this.state.assignments;
+    for (var delegate of delegates) {
+      var assignment = assignments.find(assignment => assignment.id == delegate.assignment);
+      if (!assignment) continue;
+      var countryID = assignment.country;
+      if (countryID in country_assignments) {
+        country_assignments[countryID].push(delegate);
+      } else {
+        country_assignments[countryID] = [delegate];
+      }
+    }
+    this.setState({country_assignments: country_assignments});
   }, 
 
   _handleSaveAttendance(event) {

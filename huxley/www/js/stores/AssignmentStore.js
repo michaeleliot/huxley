@@ -37,16 +37,15 @@ class AssignmentStore extends Store {
       _schoolsAssignments[assignment.school].map(a => a.id == assignment.id ? assignment : a);
   }
 
-  getCommitteeAssignments(committeeID, callback) {
-    if (!_committeeAssignments[committeeID]) {
-      _committeeAssignments[committeeID] = ServerAPI.getCommitteeAssignments(committeeID);
+  getCommitteeAssignments(committeeID) {
+    if (_committeeAssignments[committeeID]) {
+      return _committeeAssignments[committeeID]; 
     }
+    ServerAPI.getCommitteeAssignments(committeeID).then(value => {
+      AssignmentActions.committeeAssignmentsFetched(committeeID, value);
+    });
 
-    if (callback) {
-      _committeeAssignments[committeeID].then(callback);
-    }
-
-    return _committeeAssignments[committeeID];
+    return [];
 
   }
 
@@ -60,6 +59,12 @@ class AssignmentStore extends Store {
         break;
       case ActionConstants.UPDATE_ASSIGNMENT:
         this.updateAssignment(action.assignmentID, action.delta);
+        break;
+      case ActionConstants.COMMITTEE_ASSIGNMENTS_FETCHED:
+        _committeeAssignments[action.committeeID] = action.assignments;
+        for (const assignment of action.assignments) {
+          _assignments[assignment.id] = assignment;
+        }
         break;
       default:
         return;
