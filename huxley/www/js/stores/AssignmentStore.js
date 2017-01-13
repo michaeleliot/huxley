@@ -7,16 +7,19 @@
 
 var ActionConstants = require('constants/ActionConstants');
 var AssignmentActions = require('actions/AssignmentActions');
+var CurrentUserStore = require('stores/CurrentUserStore');
 var Dispatcher = require('dispatcher/Dispatcher');
 var ServerAPI = require('lib/ServerAPI');
 var {Store} = require('flux/utils');
 
 
 var _assignments = {};
+var _previousUserID = -1;
+
 
 class AssignmentStore extends Store {
   getSchoolAssignments(schoolID) {
-    var assignmentIDs = Object.keys(_assignments)
+    var assignmentIDs = Object.keys(_assignments);
     if (!assignmentIDs.length) {
       ServerAPI.getAssignments(schoolID).then(value => {
         AssignmentActions.assignmentsFetched(value);
@@ -29,7 +32,7 @@ class AssignmentStore extends Store {
   }
 
   getCommitteeAssignments(committeeID) {
-    var assignmentIDs = Object.keys(_assignments)
+    var assignmentIDs = Object.keys(_assignments);
     if (!assignmentIDs.length) {
       ServerAPI.getCommitteeAssignments(committeeID).then(value => {
         AssignmentActions.assignmentsFetched(value);
@@ -57,9 +60,12 @@ class AssignmentStore extends Store {
       case ActionConstants.UPDATE_ASSIGNMENT:
         this.updateAssignment(action.assignmentID, action.delta);
         break;
-      case ActionConstants.LOGOUT:
-        _assignments = {};
-        break;
+      case ActionConstants.LOGIN:
+        var userID = CurrentUserStore.getCurrentUser().id;
+        if(userID != _previousUserID) {
+          _assignments = {};
+          _previousUserID = userID;
+        }
       default:
         return;
     }

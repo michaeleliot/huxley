@@ -6,6 +6,7 @@
 'use strict';
 
 var ActionConstants = require('constants/ActionConstants');
+var CurrentUserStore = require('stores/CurrentUserStore');
 var DelegateActions = require('actions/DelegateActions');
 var Dispatcher = require('dispatcher/Dispatcher');
 var ServerAPI = require('lib/ServerAPI');
@@ -13,6 +14,7 @@ var {Store} = require('flux/utils');
 
 
 var _delegates = {};
+var _previousUserID = -1;
 
 class DelegateStore extends Store {
   getSchoolDelegates(schoolID) {
@@ -43,7 +45,6 @@ class DelegateStore extends Store {
 
   deleteDelegate(delegateID) {
     ServerAPI.deleteDelegate(delegateID);
-    var schoolID = _delegates[delegateID].school;
     delete _delegates[delegateID];
   }
 
@@ -93,8 +94,12 @@ class DelegateStore extends Store {
       case ActionConstants.UPDATE_COMMITTEE_DELEGATES:
         this.updateCommitteeDelegates(action.committeeID, action.delegates);
         break;
-      case ActionConstants.LOGOUT:
-        _delegates = {};
+      case ActionConstants.LOGIN:
+        var userID = CurrentUserStore.getCurrentUser().id;
+        if(userID != _previousUserID) {
+          _delegates = {};
+          _previousUserID = userID;
+        }
         break;
       default:
         return;
