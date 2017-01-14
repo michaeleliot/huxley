@@ -16,6 +16,7 @@ class DelegateSerializer(serializers.ModelSerializer):
         	'email', 
         	'created_at', 
         	'summary', 
+            'published_summary',
         	'school',
         	'session_one',
         	'session_two',

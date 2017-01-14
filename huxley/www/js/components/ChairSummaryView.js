@@ -13,12 +13,11 @@ var AssignmentStore = require('stores/AssignmentStore');
 var CountryStore = require('stores/CountryStore');
 var CurrentUserStore = require('stores/CurrentUserStore');
 var DelegateActions = require('actions/DelegateActions');
-var DelegationAttendanceRow = require('components/DelegationAttendanceRow');
 var DelegateStore = require('stores/DelegateStore');
 var InnerView = require('components/InnerView');
 var User = require('utils/User');
 
-var ChairAttendanceView = React.createClass({
+var ChairSummaryView = React.createClass({
   mixins: [
     ReactRouter.History,
   ],
@@ -67,11 +66,10 @@ var ChairAttendanceView = React.createClass({
   render() {
     return (
       <InnerView>
-        <h2>Attendance</h2>
+        <h2>Summaries</h2>
         <p>
-          Here you can take attendance for delegates. Note that confirming 
-          attendance will alert the advisor as to if there delegates have 
-          shown up to committee.
+          Here you can provide feedback for the delegates. Note that publishing
+          the summaries will allow advisors to view them.
         </p>
         <form>
           <div className="table-container">
@@ -79,48 +77,60 @@ var ChairAttendanceView = React.createClass({
               <thead>
                 <tr>
                   <th>Assignment</th>
-                  <th>Friday</th>
-                  <th>Saturday Morning</th>
-                  <th>Saturday Afternoon</th>
-                  <th>Sunday</th>
+                  <th>Summary</th>
                 </tr>
               </thead>
               <tbody>
-                {this.renderAttendanceRows()}
+                {this.renderSummaryRows()}
               </tbody>
             </table>
           </div>
           <Button
             color="green"
-            onClick={this._handleSaveAttendance}>
-            Confirm Attendance
+            onClick={this._handleSaveSummaries}>
+            Save
+          </Button>
+          <Button
+            color="blue"
+            onClick={this._handlePublishSummaries}>
+            Publish
           </Button>
         </form>
       </InnerView>
     );
   },
 
-  renderAttendanceRows() {
-    var committeeCountryIDs = Object.keys(this.state.country_assignments);
+  renderSummaryRows() {
+    var committeeCountries = Object.keys(this.state.country_assignments);
     var countries = this.state.countries;
-    return committeeCountryIDs.map(country => 
-      <DelegationAttendanceRow
-        key={country}
-        onChange={this._handleAttendanceChange}
-        countryName={Object.keys(countries).length ? countries[country].name : country}
-        countryID={country}
-        delegates={this.state.country_assignments[country]}
-      />
-    );
+    return committeeCountries.map(country => {
+      var country_delegates = this.state.country_assignments[country];
+      return (
+        <tr key={country}>
+          <td>
+            {Object.keys(countries).length ? countries[country].name : country}
+          </td>
+          <td>
+            <textarea
+              className="text-input"
+              style={{"width": "95%"}}
+              rows="3"
+              onChange={this._handleSummaryChange.bind(this, country)}
+              defaultValue={country_delegates[0].summary}
+            />
+          </td>
+        </tr>
+      );
+    });
   },
 
-  _handleAttendanceChange(session, country, event) {
+  _handleSummaryChange(country, event) {
+    var newSummary = event.target.value;
     var country_assignments = this.state.country_assignments;
     var country_delegates = country_assignments[country];
     for (var delegate of country_delegates) {
-      delegate[session] = !delegate[session];
+      delegate.summary = newSummary;
     }
-
     this.setState({country_assignments: country_assignments});
   },
 
@@ -132,17 +142,20 @@ var ChairAttendanceView = React.createClass({
     for (var delegate of delegates) {
       var assignment = assignments.find(assignment => assignment.id == delegate.assignment);
       if (!assignment) continue;
+
       var countryID = assignment.country;
       if (countryID in country_assignments) {
         country_assignments[countryID].push(delegate);
-      } else {
-        country_assignments[countryID] = [delegate];
+        continue;
       }
+      
+      country_assignments[countryID] = [delegate];
     }
+
     this.setState({country_assignments: country_assignments});
   }, 
 
-  _handleSaveAttendance(event) {
+  _handleSaveSummaries(event) {
     var committee = CurrentUserStore.getCurrentUser().committee;
     var country_assignments = this.state.country_assignments;
     var delegates = [];
@@ -150,10 +163,25 @@ var ChairAttendanceView = React.createClass({
       delegates = delegates.concat(country_assignments[country]);
     }
     DelegateActions.updateCommitteeDelegates(committee, delegates);
-    window.alert("Attendance Saved.");
-    event.preventDefault();
+    window.alert("Summaries Saved.");
+  },
+
+  _handlePublishSummaries(event) {
+    var confirm = window.confirm("Advisors will be able to see everything you have entered. Do you wish to continue?");
+    if (confirm) {
+      var committee = CurrentUserStore.getCurrentUser().committee;
+      var country_assignments = this.state.country_assignments;
+      var delegates = [];
+      for (var country in country_assignments) {
+        delegates = delegates.concat(country_assignments[country]);
+      }
+
+      delegates.forEach(delegate => delegate.published_summary = delegate.summary);
+      DelegateActions.updateCommitteeDelegates(committee, delegates);
+      window.alert("Summaries Published.");
+    }
   },
 
 });
     
-module.exports = ChairAttendanceView;
+module.exports = ChairSummaryView;
